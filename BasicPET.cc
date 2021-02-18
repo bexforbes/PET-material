@@ -63,6 +63,7 @@ int BasicRunAction::GoodEventCount = 0;
 // quickest way to change every instance
 // of these values at once
 double lgth = 0.2;
+
 double thck = 2.76;
 
 double BasicRunAction::DetLength = lgth, BasicDetectorConstruction::DetLength = lgth;

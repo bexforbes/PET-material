@@ -104,14 +104,17 @@ G4VPhysicalVolume* BasicDetectorConstruction::DefineVolumes()
   // we'll need some air
   G4NistManager* nist = G4NistManager::Instance();
    // pick material by commenting out the rest
-  G4Material* phantom_mat = nist->FindOrBuildMaterial("G4_MUSCLE_STRIATED_ICRU");
-  /*
-   G4Material* phantom_mat = nist->FindOrBuildMaterial("G4_TISSUE_SOFT_ICRP");
-  G4Material* phantom_mat = nist->FindOrBuildMaterial("G4_SKIN_ICRP");
+  //G4Material* phantom_mat = nist->FindOrBuildMaterial("G4_MUSCLE_STRIATED_ICRU");
+  
+  //G4Material* phantom_mat = nist->FindOrBuildMaterial("G4_TISSUE_SOFT_ICRP");
+  
+  //G4Material* phantom_mat = nist->FindOrBuildMaterial("G4_SKIN_ICRP");
+  
   G4Material* phantom_mat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
-  G4Material* phantom_mat = nist->FindOrBuildMaterial("G4_BLOOD_ICRP");
-  G4Material* phantom_mat = nist->FindOrBuildMaterial("G4_ADIPOSE_TISSUE_ICRP");
- */
+  
+  //G4Material* phantom_mat = nist->FindOrBuildMaterial("G4_BLOOD_ICRP");
+
+  //G4Material* phantom_mat = nist->FindOrBuildMaterial("G4_ADIPOSE_TISSUE_ICRP");
   G4Material* default_mat = nist->FindOrBuildMaterial("G4_AIR");
   G4Material* tube_mat   = nist->FindOrBuildMaterial("Lu2SiO5");
 
@@ -119,7 +122,7 @@ G4VPhysicalVolume* BasicDetectorConstruction::DefineVolumes()
   G4double PET_in_rad = 10*cm, PET_out_rad = PET_in_rad + CrystLength*cm, PET_length = DetLength*m; // vary these
 
   // world size
-  G4double world_dim = 1*m;
+  G4double world_dim = 1.*m;
 
   //
   // World
@@ -179,6 +182,10 @@ new G4PVPlacement(0,                       // no rotation
   G4Tubs* solidPatient =
     new G4Tubs("Patient", 0., patient_radius, 0.5*patient_dZ, 0., twopi);
       
+//   G4LogicalVolume* logicPatient =                         
+//     new G4LogicalVolume(solidPatient,        //its solid
+//                         phantom_mat,         //its material
+//                         "Patient");        //its name
   G4LogicalVolume* logicPatient =                         
     new G4LogicalVolume(solidPatient,        //its solid
                         phantom_mat,         //its material
@@ -215,10 +222,13 @@ void BasicDetectorConstruction::ConstructSDandField()
   // Make phantom a sensitive detector 
 
   G4MultiFunctionalDetector* patient = new G4MultiFunctionalDetector("patient");
-  G4VPrimitiveScorer* primitiv2 = new G4PSDoseDeposit("dose");
+  // the next line was missing which was causing a segmentation fault
+  G4SDManager::GetSDMpointer()->AddNewDetector(patient);
+  //
+  G4VPrimitiveScorer* primitiv2 = new G4PSEnergyDeposit("edep");
   patient->RegisterPrimitive(primitiv2);
   SetSensitiveDetector("Patient",patient);
-
+  
   /*
   auto phantomSD
     = new BasicPETSD("phantomSD", "PatientHitsCollection");

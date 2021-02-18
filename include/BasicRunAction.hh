@@ -48,6 +48,7 @@ class BasicRunAction : public G4UserRunAction
     static int GoodEventCount;
     static double DetLength;
     static double CrystLength;
+    static double SumEdep;
 };
 
 //

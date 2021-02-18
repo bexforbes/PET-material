@@ -27,6 +27,7 @@
 #include "BasicRunAction.hh"
 #include "BasicAnalysis.hh"
 #include "BasicDetectorConstruction.hh"
+#include "BasicEventAction.hh"
 
 #include "G4Run.hh"
 #include "G4RunManager.hh"
@@ -100,6 +101,11 @@ void BasicRunAction::EndOfRunAction(const G4Run* run)
   G4int nofEvents = run->GetNumberOfEvent();
   if (nofEvents == 0) return;
 
+  /*
+  const G4UserEventAction* localRun = static_cast<const BasicEventAction*>(run);
+  G4double SumEdep = run->GetSumEdep();      
+  */
+
   // print histogram statistics
 
   auto analysisManager = G4AnalysisManager::Instance();
@@ -107,12 +113,14 @@ void BasicRunAction::EndOfRunAction(const G4Run* run)
 
     G4int goodEvents = GoodEventCount;
     G4double sensitivity = (G4double(goodEvents)/nofEvents) * 100;
+    //G4double totaledep = (G4double(SumEdep/nofEvents)) ;
 
     G4cout << " Detector length: " << DetLength << " m " << G4endl;
     G4cout << " Crystal length: " << CrystLength << " cm " << G4endl;
     G4cout << " Good events: " << goodEvents << G4endl;
     G4cout << " Crude sensitivity: " << std::setprecision(5) << sensitivity << " per cent " << G4endl;
-
+    //G4cout << " Mean Energy Deposited in Patient: "  << "keV " << G4endl;
+  
 
     std::ofstream myfile;
     myfile.open("Data.csv", std::ofstream::app);
